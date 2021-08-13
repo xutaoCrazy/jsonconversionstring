@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/clipboard.js/1.7.1/clipboard.js"></script>
+  <title></title>
+  <style type="text/css">
+    .code{
+      width: 100%;
+      height: 500px;
+      overflow: auto;
+      border: solid 1px #d8d8d8;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <textarea id='jsonParm' rows="15" cols="50" ></textarea>
+    <button type='button' id='validate'>转JSON</button>
+    <button type='button'  onclick="copy1()" data-clipboard-action="copy" data-clipboard-target="#zfb_account" id="copy_zfb">复制JSON</button>
+  </div>
+  <div class='code' id="zfb_account"> </div>
+</body>
+<script>
+   var  a={'code': 0,
+ 'message': '{"codeSearchTimes":1,"resultType":"","companyInfo":{"parentId":10633,"companyType":1,"companyName":"Jmeter通用生产企业","companyAgentId":10633,"companyAgentName":"Jmeter合作商","companyContact":"26991F8DBE34","contactPhone":"6B066B6B7906779D2B0942","companyProvince":"江苏省","companyCity":"无锡市","companyCounty":"新吴区","companyAddress":"无锡新吴区微纳园","companyLogo":"","status":1,"companyProperties":[],"picScale":"0"},"productInfo":{"productId":1246,"name":"打码测试产品","productType":0,"companyId":10634,"typeId":0,"hotUrl":"https://gw.legion.vpos.xin/img/8017e5849537c87e952ad668683e01e3?f=png","expireDays":"","packageValidity":"0","status":1,"publishFlag":3,"subName":"","showData":"{\\"proON\\":\\"\\",\\"style\\":1,\\"showCN\\":0,\\"showCR\\":0,\\"modeList\\":[{\\"stageId\\":1108,\\"stageName\\":\\"??1\\",\\"isON\\":false,\\"oN\\":\\"\\",\\"isFS\\":false,\\"mode\\":1,\\"temS\\":1,\\"children\\":[{\\"propertyId\\":3889,\\"propertyName\\":\\"??\\",\\"isON\\":false,\\"oN\\":\\"\\",\\"isHi\\":false,\\"isDT\\":false},{\\"propertyId\\":3890,\\"propertyName\\":\\"??\\",\\"isON\\":false,\\"oN\\":\\"\\",\\"isHi\\":false,\\"isDT\\":false}]},{\\"stageId\\":1109,\\"stageName\\":\\"??2\\",\\"isON\\":false,\\"oN\\":\\"\\",\\"isFS\\":false,\\"mode\\":1,\\"temS\\":1,\\"children\\":[{\\"propertyId\\":3891,\\"propertyName\\":\\"??\\",\\"isON\\":false,\\"oN\\":\\"\\",\\"isHi\\":false,\\"isDT\\":false},{\\"propertyId\\":3892,\\"propertyName\\":\\"??\\",\\"isON\\":false,\\"oN\\":\\"\\",\\"isHi\\":false,\\"isDT\\":false}]}]}","isFocusImage":"1"},"traceInfo":{"isConnection":false,"childId":[],"childIdApps":[],"stageNodes":[{"stageId":1108,"parentStageId":0,"sortCode":0,"stageName":"节点1","showMode":1,"propertyGroup":[{"createTime":"2021-08-09 18:46:30","properties":[{"propertyName":"地点","stageId":1108,"dataType":4,"defaultType":"1","propertyId":3890,"sortCode":0,"allowAdd":0,"defaultValue":"北京","linkValue":""}]}]},{"stageId":1109,"parentStageId":0,"sortCode":0,"stageName":"节点2","showMode":1,"propertyGroup":[{"createTime":"2021-08-09 18:46:30","properties":[{"propertyName":"地点","stageId":1109,"dataType":4,"defaultType":"1","propertyId":3891,"sortCode":0,"allowAdd":0,"defaultValue":"京","linkValue":""}]}]}],"isCheat":""},"warningMessage":"0","codeInfo":{"codeVersion":"3","companyNo":"10634","productNo":"25","codeId":"5221458840813851","codeType":"1","ccksId":"000106340001","onlyCode":"000106340000255221458840813851","belongIndustry":"00","qrCode":"513010AAUxQAAylGcc-1QI2AAgAARIbuJAqgE-2G0HnhSUtiEZ4Ykwd1E75UiBJ6ym","nationTraceCode":""},"type":"","jumpUrl":"","cheatFlag":"","weChatTip":"","jumpCompanyFlag":"0","mallInfo":{"mallJumpFlag":"1","mallUrl":"https://mallwebapp.zcsweb.vpos.xin/#/index?companyId=131&source=1"}}'}
+  function isJSON(str) {
+    if (typeof str == 'string') {
+        try {
+            var obj=JSON.parse(str);
+            if(typeof obj == 'object' && obj ){
+                return true;
+            }else{
+                return false;
+            }
+
+        } catch(e) {
+            return false;
+        }
+    }
+}
+function parseJson(jsonObj) {
+    for(var key in jsonObj) {
+        //如果对象类型为object类型且数组长度大于0 或者 是对象 ，继续递归解析
+        var element = jsonObj[key];
+        if(isJSON(element)){
+          jsonObj[key]=JSON.parse(element)
+          element = jsonObj[key];
+        }
+        if(element.length > 0 && typeof(element) == "object" || typeof(element) == "object" ) {
+            parseJson(element);
+        } else { //不是对象或数组、直接输出
+           if(isJSON(element)){
+             jsonObj[key]=JSON.parse(element)
+           }
+        }
+    }
+   return jsonObj;
+}
+var  c=''
+$(function(){
+  $('#jsonParm').focus();
+  $('#validate').click(function(){
+    if(!$('#jsonParm').val() ){
+      alert('JSON 不能为空')
+      return false;
+    }
+    val = eval('(' + $('#jsonParm').val() + ')')
+    if(isJSON(val)){
+       c=parseJson(JSON.parse(val))
+    }else{
+      if(typeof(val) == "object"){
+        c=parseJson(val);
+      }else{
+        alert('JSON有误')
+      }
+      
+    }
+    $('.code').html(JSON.stringify(c));
+    console.log(c)
+  })
+})
+function copy1() {
+  var clipboard = new Clipboard('#copy_zfb');
+  clipboard.on('success', function(e) {
+  e.clearSelection(); //选中需要复制的内容
+    alert("复制成功！");
+  });
+  clipboard.on('error', function(e) {
+    alert("当前浏览器不支持此功能，请手动复制。")
+  });
+ }
+</script>
+</html>
